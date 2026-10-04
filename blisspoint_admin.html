@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Blisspoint Holidays | Package Admin</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+:root{font-family:Inter,system-ui,-apple-system,Segoe UI,sans-serif;color:#17211d;background:#f4f7f5}
+*{box-sizing:border-box}body{margin:0}.wrap{max-width:1120px;margin:auto;padding:24px}
+header{display:flex;justify-content:space-between;align-items:center;gap:16px;margin-bottom:22px}
+h1{font-size:25px;margin:0}h2{font-size:19px;margin:0 0 14px}.muted{color:#64716b;font-size:14px}
+.panel{background:white;border:1px solid #e2e9e5;border-radius:16px;padding:20px;margin-bottom:18px;box-shadow:0 4px 18px #14251b08}
+button{border:0;border-radius:10px;padding:11px 15px;font-weight:650;cursor:pointer;background:#146b4b;color:white}
+button.secondary{background:#edf3ef;color:#234336}button.danger{background:#fff0ef;color:#a52c27}
+button:disabled{opacity:.5;cursor:wait}input,textarea,select{font:inherit;width:100%;padding:11px 12px;border:1px solid #d7e1db;border-radius:9px;background:white;color:#17211d}
+label{display:block;font-size:13px;font-weight:650;margin:0 0 6px}.field{margin-bottom:13px}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.actions{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.topline{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:14px}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:18px}
+.stat{background:#f6faf7;border-radius:12px;padding:14px}.stat strong{font-size:23px;display:block}.stat span{font-size:13px;color:#64716b}
+.item{border:1px solid #e6ece8;border-radius:12px;padding:14px;display:flex;gap:14px;justify-content:space-between;align-items:flex-start;margin-top:10px}
+.item h3{font-size:16px;margin:0 0 5px}.item p{margin:0;color:#64716b;font-size:13px}.tag{display:inline-block;padding:4px 8px;border-radius:20px;font-size:11px;font-weight:700;margin-top:8px;background:#e9f5ed;color:#246342}.tag.draft{background:#f1f2f1;color:#657069}
+#app{display:none}.notice{padding:11px 13px;border-radius:10px;margin:12px 0;font-size:14px;display:none}.notice.error{background:#fff0ef;color:#9b2b25}.notice.ok{background:#e9f6ee;color:#21613d}
+.login{max-width:430px;margin:8vh auto}.small{font-size:12px;color:#6c7972;line-height:1.5}
+@media(max-width:650px){.wrap{padding:15px}.grid,.stats{grid-template-columns:1fr}.item{display:block}.item .actions{margin-top:12px}header{align-items:flex-start;flex-direction:column}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <section id="login" class="panel login">
+    <h1>Blisspoint Holidays</h1><p class="muted">Package administration</p>
+    <div id="loginNotice" class="notice error"></div>
+    <form id="loginForm">
+      <div class="field"><label for="email">Admin email</label><input id="email" type="email" autocomplete="username" required></div>
+      <div class="field"><label for="password">Password</label><input id="password" type="password" autocomplete="current-password" required></div>
+      <button type="submit" id="loginBtn">Sign in</button>
+    </form>
+    <p class="small">Sign in with an account already authorized in your Supabase project. This page does not provide public sign-up.</p>
+  </section>
+
+  <main id="app">
+    <header><div><h1>Package manager</h1><div class="muted">Blisspoint Holidays</div></div><button class="secondary" id="logoutBtn">Sign out</button></header>
+    <div class="stats">
+      <div class="stat"><strong id="totalCount">0</strong><span>Total packages</span></div>
+      <div class="stat"><strong id="publishedCount">0</strong><span>Published</span></div>
+      <div class="stat"><strong id="draftCount">0</strong><span>Drafts</span></div>
+    </div>
+    <div id="notice" class="notice"></div>
+    <section class="panel">
+      <div class="topline"><h2 id="formTitle">Add a package</h2><button class="secondary" id="resetBtn" type="button">Clear form</button></div>
+      <form id="packageForm">
+        <input type="hidden" id="packageId">
+        <div class="grid">
+          <div class="field"><label for="title">Package title *</label><input id="title" required placeholder="e.g. Munnar Getaway"></div>
+          <div class="field"><label for="slug">Slug (optional)</label><input id="slug" placeholder="munnar-getaway"></div>
+          <div class="field"><label for="destination">Destination</label><input id="destination" placeholder="Munnar, Kerala"></div>
+          <div class="field"><label for="duration">Duration</label><input id="duration" placeholder="3 Days / 2 Nights"></div>
+          <div class="field"><label for="price">Price</label><input id="price" placeholder="₹ 6,999 / person"></div>
+          <div class="field"><label for="image_url">Image URL</label><input id="image_url" type="url" placeholder="https://..."></div>
+        </div>
+        <div class="field"><label for="description">Description</label><textarea id="description" rows="3"></textarea></div>
+        <div class="field"><label for="itinerary">Itinerary</label><textarea id="itinerary" rows="5" placeholder="Day 1: ...&#10;Day 2: ..."></textarea></div>
+        <div class="actions"><button type="submit" id="saveBtn">Save package</button><span class="small">New packages are saved as drafts unless you publish them.</span></div>
+      </form>
+    </section>
+    <section class="panel">
+      <div class="topline"><h2>Packages</h2><button class="secondary" id="refreshBtn">Refresh</button></div>
+      <div class="grid">
+        <div class="field"><label for="search">Search</label><input id="search" placeholder="Search packages"></div>
+        <div class="field"><label for="filter">Status</label><select id="filter"><option value="all">All packages</option><option value="published">Published</option><option value="draft">Drafts</option></select></div>
+      </div>
+      <div id="packageList"></div>
+    </section>
+  </main>
+</div>
+<script>
+(() => {
+  // These are safe to use in a browser only when Supabase RLS is correctly configured.
+  const SUPABASE_URL = "https://zqpqdlaeifktfdwajaou.supabase.co";
+  const SUPABASE_ANON_KEY = "sb_publishable_jKd0t6fRhdHPgzYM_C2BQg_1Ij39Gph";
+  const TABLE = "packages";
+  const client = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  const $ = id => document.getElementById(id);
+  let packages = [];
+
+  function showNotice(message, error=false, login=false) {
+    const el = $(login ? "loginNotice" : "notice");
+    el.textContent = message; el.className = "notice " + (error ? "error" : "ok"); el.style.display = "block";
+  }
+  function hideNotice(login=false){ const el=$(login?"loginNotice":"notice");el.style.display="none"; }
+  function safe(v){return String(v ?? "").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
+  function slugify(s){return s.toLowerCase().trim().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"");}
+  function setSignedIn(on){$("login").style.display=on?"none":"block";$("app").style.display=on?"block":"none";}
+  async function loadPackages(){
+    $("packageList").innerHTML='<p class="muted">Loading packages…</p>';
+    const {data,error}=await client.from(TABLE).select("*").order("created_at",{ascending:false});
+    if(error){showNotice(error.message,true);$("packageList").innerHTML="";return;}
+    packages=data||[];render();
+  }
+  function render(){
+    const published=packages.filter(p=>!!p.is_published).length;
+    $("totalCount").textContent=packages.length;$("publishedCount").textContent=published;$("draftCount").textContent=packages.length-published;
+    const q=$("search").value.toLowerCase().trim(),f=$("filter").value;
+    const rows=packages.filter(p=>(f==="all"||(f==="published"&&p.is_published)||(f==="draft"&&!p.is_published))&&[p.title,p.destination,p.description].some(v=>String(v||"").toLowerCase().includes(q)));
+    $("packageList").innerHTML=rows.length?rows.map(p=>`
+      <article class="item"><div><h3>${safe(p.title||"Untitled")}</h3><p>${safe(p.destination||"No destination")} · ${safe(p.duration||"Duration not set")} · ${safe(p.price||"Price not set")}</p><span class="tag ${p.is_published?"":"draft"}">${p.is_published?"Published":"Draft"}</span></div>
+      <div class="actions"><button class="secondary" data-edit="${safe(p.id)}">Edit</button><button class="secondary" data-toggle="${safe(p.id)}">${p.is_published?"Unpublish":"Publish"}</button><button class="danger" data-delete="${safe(p.id)}">Delete</button></div></article>`).join(""):'<p class="muted">No packages match.</p>';
+    $("packageList").querySelectorAll("[data-edit]").forEach(b=>b.onclick=()=>editPackage(b.dataset.edit));
+    $("packageList").querySelectorAll("[data-toggle]").forEach(b=>b.onclick=()=>togglePublish(b.dataset.toggle));
+    $("packageList").querySelectorAll("[data-delete]").forEach(b=>b.onclick=()=>deletePackage(b.dataset.delete));
+  }
+  function resetForm(){
+    $("packageForm").reset();$("packageId").value="";$("formTitle").textContent="Add a package";$("saveBtn").textContent="Save package";
+  }
+  function editPackage(id){
+    const p=packages.find(x=>String(x.id)===String(id));if(!p)return;
+    $("packageId").value=p.id;
+    ["title","slug","destination","duration","price","image_url","description","itinerary"].forEach(k=>$(k).value=p[k]??"");
+    $("formTitle").textContent="Edit package";$("saveBtn").textContent="Update package";
+    window.scrollTo({top:0,behavior:"smooth"});
+  }
+  async function savePackage(e){
+    e.preventDefault();hideNotice();
+    const id=$("packageId").value;
+    const title=$("title").value.trim();
+    const payload={title,slug:$("slug").value.trim()||slugify(title),destination:$("destination").value.trim(),duration:$("duration").value.trim(),price:$("price").value.trim(),image_url:$("image_url").value.trim(),description:$("description").value.trim(),itinerary:$("itinerary").value.trim()};
+    if(!id)payload.is_published=false;
+    $("saveBtn").disabled=true;
+    const result=id?await client.from(TABLE).update(payload).eq("id",id):await client.from(TABLE).insert(payload);
+    $("saveBtn").disabled=false;
+    if(result.error){showNotice(result.error.message,true);return;}
+    showNotice(id?"Package updated.":"Package added as draft.");resetForm();await loadPackages();
+  }
+  async function togglePublish(id){
+    const p=packages.find(x=>String(x.id)===String(id));if(!p)return;
+    const {error}=await client.from(TABLE).update({is_published:!p.is_published}).eq("id",id);
+    if(error){showNotice(error.message,true);return;}showNotice(p.is_published?"Package unpublished.":"Package published.");await loadPackages();
+  }
+  async function deletePackage(id){
+    const p=packages.find(x=>String(x.id)===String(id));if(!p)return;
+    if(!confirm(`Delete "${p.title}"? This cannot be undone.`))return;
+    const {error}=await client.from(TABLE).delete().eq("id",id);
+    if(error){showNotice(error.message,true);return;}showNotice("Package deleted.");await loadPackages();
+  }
+  $("loginForm").addEventListener("submit",async e=>{
+    e.preventDefault();hideNotice(true);$("loginBtn").disabled=true;
+    const {error}=await client.auth.signInWithPassword({email:$("email").value.trim(),password:$("password").value});
+    $("loginBtn").disabled=false;
+    if(error){showNotice(error.message,true,true);return;}
+    setSignedIn(true);await loadPackages();
+  });
+  $("logoutBtn").onclick=async()=>{await client.auth.signOut();setSignedIn(false);};
+  $("packageForm").addEventListener("submit",savePackage);
+  $("resetBtn").onclick=resetForm;$("refreshBtn").onclick=loadPackages;
+  $("search").addEventListener("input",render);$("filter").addEventListener("change",render);
+  client.auth.getSession().then(({data})=>{if(data.session){setSignedIn(true);loadPackages();}});
+})();
+</script>
+</body>
+</html>
