@@ -1,5 +1,5 @@
 
-/* Blisspoint Holidays — Supabase public packages */
+/* BLISSPOINT Holidays — Supabase public packages */
 
 (async function () {
   "use strict";
@@ -15,7 +15,7 @@
   const grid = document.querySelector("#packages .package-grid");
 
   if (!grid || !window.supabase) {
-    console.warn("Package grid or Supabase library not found.");
+    console.error("Package grid or Supabase library not found.");
     return;
   }
 
@@ -35,28 +35,47 @@
 
     if (error) throw error;
 
-    // Remove previously rendered live cards
+    // Remove previous live cards
     grid.querySelectorAll("[data-supabase-package]")
       .forEach(card => card.remove());
 
-    (data || []).forEach(pkg => {
-      const title = pkg.title || pkg.destination || "Tour package";
+    // Show a message if there are no published packages
+    if (!data || data.length === 0) {
+      const empty = document.createElement("p");
+      empty.className = "empty";
+      empty.textContent = "New tour packages are coming soon.";
+      grid.appendChild(empty);
+      return;
+    }
+
+    data.forEach(pkg => {
+      const title =
+        pkg.title || pkg.destination || "Tour package";
 
       const card = document.createElement("article");
       card.className = "package-card";
       card.dataset.supabasePackage = String(pkg.id);
 
-      // Image area
+      // Package image
       const art = document.createElement("div");
       art.className = "package-art";
 
       if (pkg.image_url) {
-        art.style.backgroundImage =
-          `linear-gradient(180deg,rgba(6,30,48,.08),rgba(6,30,48,.68)),url("${pkg.image_url.replace(/["\\]/g, "\\$&")}")`;
+        const img = document.createElement("img");
+        img.src = pkg.image_url;
+        img.alt = title;
+        img.loading = "lazy";
+        img.style.cssText =
+          "position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0;";
 
-        art.style.backgroundPosition = "center";
-        art.style.backgroundSize = "cover";
+        img.onerror = () => img.remove();
+
+        art.appendChild(img);
       }
+
+      const overlay = document.createElement("div");
+      overlay.style.cssText =
+        "position:absolute;inset:0;background:linear-gradient(180deg,rgba(6,30,48,.08),rgba(6,30,48,.68));z-index:0;pointer-events:none;";
 
       const destination = document.createElement("span");
       destination.className = "art-top";
@@ -66,7 +85,7 @@
       const heading = document.createElement("h3");
       heading.textContent = title;
 
-      art.append(destination, heading);
+      art.append(overlay, destination, heading);
 
       // Package information
       const info = document.createElement("div");
@@ -94,7 +113,7 @@
         brochure.target = "_blank";
         brochure.rel = "noopener noreferrer";
         brochure.textContent = "View brochure ↗";
-        info.append(brochure);
+        info.appendChild(brochure);
       }
 
       // WhatsApp enquiry
@@ -111,15 +130,27 @@
       enquiry.rel = "noopener noreferrer";
       enquiry.textContent = "Enquire on WhatsApp ↗";
 
-      info.append(enquiry);
+      info.appendChild(enquiry);
+
       card.append(art, info);
       grid.appendChild(card);
     });
+
+    console.log(
+      `Successfully loaded ${data.length} published packages.`
+    );
 
   } catch (error) {
     console.error(
       "Unable to load published packages:",
       error
     );
+
+    const message = document.createElement("p");
+    message.className = "empty";
+    message.textContent =
+      "Our latest packages are temporarily unavailable. Please contact us on WhatsApp.";
+
+    grid.appendChild(message);
   }
 })();
