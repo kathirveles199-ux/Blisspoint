@@ -1,338 +1,367 @@
-
-/* BLISSPOINT Holidays — live published packages with details modal
-   Include after Supabase JS:
-   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-   <script src="supabase_publish_packages.js"></script>
-*/
-(async function () {
+/* BLISSPOINT Holidays — package cards and details modal */
+(() => {
   "use strict";
+
+  // Prevent this version from initializing more than once.
+  if (window.blisspointPackagesLoaded) return;
+  window.blisspointPackagesLoaded = true;
 
   const SUPABASE_URL = "https://zqpqdlaeifktfdwajaou.supabase.co";
   const SUPABASE_KEY = "sb_publishable_jKd0t6fRhdHPgzYM_C2BQg_1Ij39Gph";
-  const WHATSAPP_NUMBER = "917639968597";
-  const grid = document.querySelector("#packages .package-grid");
+  const WHATSAPP = "917639968597";
 
-  if (!grid || !window.supabase) {
-    console.error("Package grid or Supabase library not found.");
+  const grid =
+    document.querySelector("#packages .package-grid") ||
+    document.querySelector(".package-grid");
+
+  if (!grid) {
+    console.error("Package grid not found.");
+    return;
+  }
+
+  // Clear the old hardcoded cards immediately.
+  grid.replaceChildren();
+
+  if (!window.supabase) {
+    grid.textContent = "Packages are temporarily unavailable.";
+    console.error("Supabase library is missing.");
     return;
   }
 
   const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-  function ensureDetailsModal() {
-    if (document.getElementById("packageDetailsModal")) return;
+  function addModalStyles() {
+    if (document.getElementById("bp-modal-style")) return;
 
     const style = document.createElement("style");
+    style.id = "bp-modal-style";
     style.textContent = `
-      .bp-details-backdrop {
+      .bp-modal-overlay {
         display: none;
         position: fixed;
         inset: 0;
-        z-index: 100;
-        background: #071d27c9;
-        padding: 18px;
-        overflow: auto;
+        z-index: 9999;
+        background: rgba(5, 20, 30, .75);
+        padding: 16px;
         align-items: center;
         justify-content: center;
+        overflow-y: auto;
       }
-      .bp-details-backdrop.show { display: flex; }
-      .bp-details {
+      .bp-modal-overlay.is-open { display: flex; }
+      .bp-modal {
+        width: min(720px, 100%);
+        max-height: 92vh;
+        overflow-y: auto;
         position: relative;
         background: #fffdf7;
         color: #102b45;
         border-radius: 18px;
-        width: min(760px, 100%);
-        max-height: 92vh;
-        overflow: auto;
-        box-shadow: 0 25px 90px #0005;
+        box-shadow: 0 20px 70px #0004;
       }
-      .bp-details-close {
-        position: sticky;
-        float: right;
-        top: 10px;
-        margin: 10px 10px -48px 0;
+      .bp-modal-close {
+        position: absolute;
         z-index: 2;
+        top: 12px;
+        right: 12px;
+        width: 40px;
+        height: 40px;
         border: 0;
         border-radius: 50%;
-        width: 38px;
-        height: 38px;
-        background: #fff;
-        font-size: 25px;
+        background: white;
+        color: #102b45;
+        font-size: 26px;
         cursor: pointer;
-        box-shadow: 0 2px 12px #0002;
       }
-      .bp-details-image {
-        width: 100%;
-        height: 260px;
-        object-fit: cover;
+      .bp-modal-image {
         display: block;
-        background: linear-gradient(135deg,#275d48,#9bbd8b,#214d58);
+        width: 100%;
+        max-height: 330px;
+        object-fit: cover;
       }
-      .bp-details-content { padding: 24px; }
-      .bp-details-content h2 {
-        font: 700 32px Georgia,serif;
-        margin: 0 0 10px;
+      .bp-modal-body { padding: 24px; }
+      .bp-modal-body h2 {
+        font: 700 30px Georgia, serif;
+        margin: 0 0 12px;
       }
-      .bp-details-meta {
-        font-size: 13px;
-        font-weight: 750;
+      .bp-modal-meta {
         color: #087b78;
-        margin-bottom: 15px;
+        font-weight: 700;
+        margin-bottom: 16px;
       }
-      .bp-details-content p {
+      .bp-modal-body p {
         white-space: pre-line;
-        color: #526771;
         line-height: 1.7;
+        color: #526771;
       }
-      .bp-details-content h3 {
-        font: 700 20px Georgia;
-        margin: 22px 0 8px;
+      .bp-modal-body h3 {
+        font: 700 21px Georgia, serif;
+        margin-top: 24px;
       }
-      .bp-details-actions {
+      .bp-modal-actions {
         display: flex;
         flex-wrap: wrap;
         gap: 10px;
-        margin-top: 20px;
+        margin-top: 22px;
       }
-      .bp-details-actions a {
-        display: inline-flex;
-        padding: 12px 17px;
-        border-radius: 999px;
-        background: #064e52;
+      .bp-modal-actions a {
+        display: inline-block;
+        border-radius: 30px;
+        padding: 12px 18px;
+        background: #07545a;
         color: white;
-        font-weight: 750;
+        text-decoration: none;
+        font-weight: 700;
       }
-      .bp-details-actions a.secondary {
+      .bp-modal-actions a.secondary {
         background: #eaf3ed;
-        color: #064e52;
+        color: #07545a;
       }
-      .package-card[data-supabase-package] { cursor: pointer; }
-      .package-card[data-supabase-package]:focus-visible {
+      .bp-package-card { cursor: pointer; }
+      .bp-package-card:focus-visible,
+      .bp-package-card button:focus-visible {
         outline: 3px solid #087b78;
         outline-offset: 3px;
       }
-      @media(max-width:600px) {
-        .bp-details-backdrop { padding: 8px; }
-        .bp-details-image { height: 190px; }
-        .bp-details-content { padding: 19px; }
-        .bp-details-content h2 { font-size: 27px; }
-      }
     `;
     document.head.appendChild(style);
+  }
 
-    const backdrop = document.createElement("div");
-    backdrop.id = "packageDetailsModal";
-    backdrop.className = "bp-details-backdrop";
-    backdrop.innerHTML = `
-      <section class="bp-details" role="dialog" aria-modal="true"
-        aria-labelledby="bpDetailsTitle">
-        <button type="button" class="bp-details-close"
+  function createModal() {
+    addModalStyles();
+
+    let overlay = document.getElementById("bp-package-modal");
+    if (overlay) return overlay;
+
+    overlay = document.createElement("div");
+    overlay.id = "bp-package-modal";
+    overlay.className = "bp-modal-overlay";
+    overlay.innerHTML = `
+      <section class="bp-modal" role="dialog"
+        aria-modal="true" aria-labelledby="bp-modal-title">
+        <button class="bp-modal-close" type="button"
           aria-label="Close details">×</button>
-        <img class="bp-details-image" alt="" hidden>
-        <div class="bp-details-content">
-          <div class="kicker">BLISSPOINT Holidays</div>
-          <h2 id="bpDetailsTitle"></h2>
-          <div class="bp-details-meta"></div>
-          <p class="bp-details-description"></p>
-          <div class="bp-details-itinerary-wrap" hidden>
-            <h3>Itinerary</h3>
-            <p class="bp-details-itinerary"></p>
+        <img class="bp-modal-image" alt="" hidden>
+        <div class="bp-modal-body">
+          <h2 id="bp-modal-title"></h2>
+          <div class="bp-modal-meta"></div>
+          <p class="bp-modal-description"></p>
+          <div class="bp-modal-itinerary" hidden>
+            <h3>Tour itinerary</h3>
+            <p></p>
           </div>
-          <div class="bp-details-actions"></div>
+          <div class="bp-modal-actions"></div>
         </div>
       </section>
     `;
-    document.body.appendChild(backdrop);
+    document.body.appendChild(overlay);
 
-    const close = () => backdrop.classList.remove("show");
+    const close = () => {
+      overlay.classList.remove("is-open");
+    };
 
-    backdrop.querySelector(".bp-details-close")
+    overlay.querySelector(".bp-modal-close")
       .addEventListener("click", close);
 
-    backdrop.addEventListener("click", (e) => {
-      if (e.target === backdrop) close();
+    overlay.addEventListener("click", (event) => {
+      if (event.target === overlay) close();
     });
 
-    document.addEventListener("keydown", (e) => {
-      if (e.key === "Escape") close();
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape") close();
     });
+
+    return overlay;
   }
 
-  function showDetails(pkg) {
-    ensureDetailsModal();
+  function itineraryToText(value) {
+    if (!value) return "";
 
-    const modal = document.getElementById("packageDetailsModal");
+    if (typeof value === "string") return value;
+
+    if (Array.isArray(value)) {
+      return value.map((item) => {
+        if (typeof item === "string") return item;
+        if (item && typeof item === "object") {
+          return Object.entries(item)
+            .map(([key, val]) => `${key}: ${val}`)
+            .join("\n");
+        }
+        return String(item);
+      }).join("\n\n");
+    }
+
+    if (typeof value === "object") {
+      return Object.entries(value)
+        .map(([key, val]) => `${key}: ${
+          typeof val === "object" ? JSON.stringify(val) : val
+        }`)
+        .join("\n\n");
+    }
+
+    return String(value);
+  }
+
+  function openDetails(pkg) {
+    const modal = createModal();
     const title = pkg.title || pkg.destination || "Tour package";
-    const img = modal.querySelector(".bp-details-image");
 
-    img.hidden = !pkg.image_url;
-    img.src = pkg.image_url || "";
-    img.alt = title;
-    img.onerror = () => { img.hidden = true; };
+    const image = modal.querySelector(".bp-modal-image");
+    image.hidden = !pkg.image_url;
+    image.removeAttribute("src");
 
-    modal.querySelector("#bpDetailsTitle").textContent = title;
+    if (pkg.image_url) {
+      image.src = pkg.image_url;
+      image.alt = title;
+      image.onerror = () => {
+        image.hidden = true;
+      };
+    }
 
-    modal.querySelector(".bp-details-meta").textContent =
-      [pkg.destination, pkg.duration, pkg.price]
-        .filter(Boolean)
-        .join(" · ") || "Customisable tour package";
+    modal.querySelector("#bp-modal-title").textContent = title;
 
-    modal.querySelector(".bp-details-description").textContent =
-      pkg.description ||
-      "Contact us for package details and availability.";
+    modal.querySelector(".bp-modal-meta").textContent = [
+      pkg.destination,
+      pkg.duration,
+      pkg.price != null ? `₹${pkg.price}` : null
+    ].filter(Boolean).join(" · ");
 
-    const itineraryWrap =
-      modal.querySelector(".bp-details-itinerary-wrap");
+    modal.querySelector(".bp-modal-description").textContent =
+      pkg.description || "Contact us for more package details.";
 
-    itineraryWrap.hidden = !pkg.itinerary;
+    const itinerary = itineraryToText(pkg.itinerary);
+    const itineraryBox = modal.querySelector(".bp-modal-itinerary");
+    itineraryBox.hidden = !itinerary;
+    itineraryBox.querySelector("p").textContent = itinerary;
 
-    const itineraryText = Array.isArray(pkg.itinerary)
-      ? pkg.itinerary.map((item) =>
-          typeof item === "string"
-            ? item
-            : Object.values(item || {}).join(" — ")
-        ).join("\n")
-      : typeof pkg.itinerary === "object" && pkg.itinerary !== null
-        ? JSON.stringify(pkg.itinerary, null, 2)
-        : pkg.itinerary || "";
-
-    modal.querySelector(".bp-details-itinerary").textContent =
-      itineraryText;
-
-    const actions = modal.querySelector(".bp-details-actions");
+    const actions = modal.querySelector(".bp-modal-actions");
     actions.replaceChildren();
 
     if (pkg.brochure_url) {
       const brochure = document.createElement("a");
-      brochure.className = "secondary";
       brochure.href = pkg.brochure_url;
       brochure.target = "_blank";
       brochure.rel = "noopener noreferrer";
-      brochure.textContent = "View brochure ↗";
+      brochure.className = "secondary";
+      brochure.textContent = "View brochure";
       actions.appendChild(brochure);
     }
 
-    const message =
-      `Hi BLISSPOINT Holidays! I'm interested in the ${title} package. Please share more details.`;
-
     const enquiry = document.createElement("a");
+    const message =
+      `Hi BLISSPOINT Holidays! I'm interested in ${title}. Please share more details.`;
+
     enquiry.href =
-      `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
+      `https://wa.me/${WHATSAPP}?text=${encodeURIComponent(message)}`;
     enquiry.target = "_blank";
     enquiry.rel = "noopener noreferrer";
-    enquiry.textContent = "Enquire on WhatsApp ↗";
+    enquiry.textContent = "Enquire on WhatsApp";
     actions.appendChild(enquiry);
 
-    modal.classList.add("show");
+    modal.classList.add("is-open");
   }
 
-  try {
-    const { data, error } = await db
-      .from("packages")
-      .select(
-        "id,title,slug,destination,duration,price,image_url,description,itinerary,brochure_url"
-      )
-      .eq("is_published", true)
-      .order("created_at", { ascending: false });
+  function createCard(pkg) {
+    const card = document.createElement("article");
+    card.className = "package-card bp-package-card";
 
-    if (error) throw error;
+    const title = pkg.title || pkg.destination || "Tour package";
 
-    // Use Supabase as the authoritative package list.
-    // The original packages should already be migrated into the table.
-    grid.replaceChildren();
+    const art = document.createElement("div");
+    art.className = "package-art";
 
-    (data || []).forEach((pkg) => {
-      const title = pkg.title || pkg.destination || "Tour package";
+    if (pkg.image_url) {
+      const image = document.createElement("img");
+      image.src = pkg.image_url;
+      image.alt = title;
+      image.loading = "lazy";
+      image.style.cssText =
+        "position:absolute;inset:0;width:100%;height:100%;object-fit:cover;";
+      image.onerror = () => image.remove();
+      art.appendChild(image);
+    }
 
-      const card = document.createElement("article");
-      card.className = "package-card";
-      card.dataset.supabasePackage = String(pkg.id);
-      card.tabIndex = 0;
-      card.setAttribute("role", "button");
-      card.setAttribute("aria-label", `View details for ${title}`);
+    const destination = document.createElement("span");
+    destination.className = "art-top";
+    destination.textContent =
+      `${pkg.destination || "Kerala"}${pkg.duration ? " · " + pkg.duration : ""}`;
 
-      const art = document.createElement("div");
-      art.className = "package-art";
+    const heading = document.createElement("h3");
+    heading.textContent = title;
 
-      if (pkg.image_url) {
-        const img = document.createElement("img");
-        img.src = pkg.image_url;
-        img.alt = title;
-        img.loading = "lazy";
-        img.style.cssText =
-          "position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0;";
-        img.onerror = () => img.remove();
-        art.appendChild(img);
+    art.append(destination, heading);
+
+    const info = document.createElement("div");
+    info.className = "package-info";
+
+    const meta = document.createElement("div");
+    meta.className = "package-meta";
+    meta.textContent = [
+      pkg.duration,
+      pkg.price != null ? `₹${pkg.price}` : null
+    ].filter(Boolean).join(" · ");
+
+    const description = document.createElement("p");
+    description.textContent =
+      pkg.description || "Contact us for package details.";
+
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "package-link";
+    button.textContent = "Explore this package ↗";
+    button.addEventListener("click", () => openDetails(pkg));
+
+    info.append(meta, description, button);
+    card.append(art, info);
+
+    // Clicking the card itself also opens details.
+    card.addEventListener("click", (event) => {
+      if (event.target.closest("a, button")) return;
+      openDetails(pkg);
+    });
+
+    return card;
+  }
+
+  async function loadPackages() {
+    try {
+      const { data, error } = await db
+        .from("packages")
+        .select(
+          "id,title,slug,destination,duration,price,description,itinerary,image_url,brochure_url"
+        )
+        .eq("is_published", true)
+        .order("created_at", { ascending: false });
+
+      if (error) throw error;
+
+      grid.replaceChildren();
+
+      if (!data || data.length === 0) {
+        const empty = document.createElement("p");
+        empty.textContent = "No packages are available right now.";
+        grid.appendChild(empty);
+        return;
       }
 
-      const overlay = document.createElement("div");
-      overlay.style.cssText =
-        "position:absolute;inset:0;background:linear-gradient(180deg,rgba(6,30,48,.08),rgba(6,30,48,.68));z-index:0;pointer-events:none;";
+      // Prevent duplicates if the database has repeated titles/slugs.
+      const seen = new Set();
 
-      const destination = document.createElement("span");
-      destination.className = "art-top";
-      destination.textContent =
-        pkg.destination || "BLISSPOINT Holidays";
-
-      const heading = document.createElement("h3");
-      heading.textContent = title;
-
-      art.append(overlay, destination, heading);
-
-      const info = document.createElement("div");
-      info.className = "package-info";
-
-      const meta = document.createElement("div");
-      meta.className = "package-meta";
-      meta.textContent =
-        [pkg.duration, pkg.price]
-          .filter(Boolean)
-          .join(" · ") || "Customisable tour package";
-
-      const description = document.createElement("p");
-      description.textContent =
-        pkg.description ||
-        "Contact us for package details and availability.";
-
-      const details = document.createElement("button");
-      details.type = "button";
-      details.className = "package-link";
-      details.style.cssText =
-        "border:0;background:none;padding:0;text-align:left;cursor:pointer;font:inherit;margin-top:10px;";
-      details.textContent = "View full details ↗";
-
-      info.append(meta, description, details);
-      card.append(art, info);
-
-      const open = () => showDetails(pkg);
-
-      card.addEventListener("click", open);
-
-      card.addEventListener("keydown", (e) => {
-        if (
-          e.target === card &&
-          (e.key === "Enter" || e.key === " ")
-        ) {
-          e.preventDefault();
-          open();
-        }
+      data.forEach((pkg) => {
+        const key = pkg.slug || pkg.title;
+        if (seen.has(key)) return;
+        seen.add(key);
+        grid.appendChild(createCard(pkg));
       });
+    } catch (error) {
+      console.error("Package loading failed:", error);
+      grid.replaceChildren();
 
-      details.addEventListener("click", (e) => {
-        e.stopPropagation();
-        open();
-      });
-
-      grid.appendChild(card);
-    });
-  } catch (error) {
-    console.error("Unable to load published packages:", error);
-
-    const message = document.createElement("p");
-    message.className = "empty";
-    message.textContent =
-      "Our latest packages are temporarily unavailable. Please contact us on WhatsApp.";
-
-    grid.appendChild(message);
+      const message = document.createElement("p");
+      message.textContent =
+        "Packages are temporarily unavailable. Please contact us on WhatsApp.";
+      grid.appendChild(message);
+    }
   }
+
+  loadPackages();
 })();
