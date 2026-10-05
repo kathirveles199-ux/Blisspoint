@@ -1,0 +1,315 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Tour Package | BLISSPOINT Holidays</title>
+  <meta name="description" content="Explore tour packages with BLISSPOINT Holidays.">
+  <style>
+    :root {
+      --ink: #102b45;
+      --teal: #087b78;
+      --deep: #064e52;
+      --cream: #fbf8ef;
+      --muted: #647482;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      background: var(--cream);
+      color: var(--ink);
+      font-family: Inter, system-ui, sans-serif;
+    }
+
+    a { color: inherit; text-decoration: none; }
+
+    header {
+      background: #fffdf8;
+      border-bottom: 1px solid #e4e8e2;
+      padding: 18px 5%;
+    }
+
+    .brand {
+      font-weight: 900;
+      color: var(--deep);
+      letter-spacing: .04em;
+    }
+
+    .container {
+      width: min(1000px, 92%);
+      margin: auto;
+    }
+
+    .back {
+      display: inline-block;
+      margin: 30px 0 18px;
+      color: var(--teal);
+      font-weight: 750;
+    }
+
+    .hero-image {
+      width: 100%;
+      height: min(48vw, 440px);
+      min-height: 220px;
+      object-fit: cover;
+      border-radius: 20px;
+      background: #dcefe8;
+    }
+
+    .content {
+      padding: 30px 0 70px;
+    }
+
+    .kicker {
+      text-transform: uppercase;
+      letter-spacing: .2em;
+      font-size: 11px;
+      font-weight: 850;
+      color: var(--teal);
+    }
+
+    h1 {
+      font: 700 clamp(34px, 6vw, 56px)/1.08 Georgia, serif;
+      margin: 12px 0;
+    }
+
+    .meta {
+      color: var(--muted);
+      font-weight: 750;
+      margin: 14px 0 25px;
+    }
+
+    .description {
+      line-height: 1.8;
+      color: #526771;
+      white-space: pre-line;
+    }
+
+    h2 {
+      font: 700 27px Georgia, serif;
+      margin: 35px 0 15px;
+    }
+
+    .itinerary {
+      line-height: 1.8;
+      color: #526771;
+      white-space: pre-line;
+    }
+
+    .actions {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 30px;
+    }
+
+    .btn {
+      display: inline-block;
+      border-radius: 999px;
+      padding: 14px 22px;
+      background: var(--deep);
+      color: white;
+      font-weight: 750;
+    }
+
+    .btn.secondary {
+      background: #e1eee8;
+      color: var(--deep);
+    }
+
+    .status {
+      padding: 60px 0;
+      text-align: center;
+      color: var(--muted);
+    }
+
+    footer {
+      padding: 25px 5%;
+      background: #f3f0e7;
+      text-align: center;
+      color: var(--muted);
+      font-size: 12px;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <a class="brand" href="index.html">▲ BLISSPOINT HOLIDAYS</a>
+  </header>
+
+  <main class="container">
+    <a class="back" href="index.html#packages">← Back to packages</a>
+
+    <div id="status" class="status">Loading package details…</div>
+
+    <article id="package" hidden>
+      <img id="image" class="hero-image" alt="" hidden>
+
+      <div class="content">
+        <div class="kicker">BLISSPOINT Holidays · Your next getaway</div>
+        <h1 id="title"></h1>
+        <div id="meta" class="meta"></div>
+        <p id="description" class="description"></p>
+
+        <section id="itinerarySection" hidden>
+          <h2>Tour itinerary</h2>
+          <div id="itinerary" class="itinerary"></div>
+        </section>
+
+        <div class="actions" id="actions"></div>
+      </div>
+    </article>
+  </main>
+
+  <footer>
+    © <span id="year"></span> BLISSPOINT Holidays · Travel · Explore · Belong
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    (async function () {
+      "use strict";
+
+      const SUPABASE_URL =
+        "https://zqpqdlaeifktfdwajaou.supabase.co";
+      const SUPABASE_KEY =
+        "sb_publishable_jKd0t6fRhdHPgzYM_C2BQg_1Ij39Gph";
+      const WHATSAPP = "917639968597";
+
+      document.getElementById("year").textContent =
+        new Date().getFullYear();
+
+      const status = document.getElementById("status");
+      const article = document.getElementById("package");
+
+      const params = new URLSearchParams(window.location.search);
+      const slug = params.get("slug");
+
+      if (!slug) {
+        status.textContent = "No package was selected.";
+        return;
+      }
+
+      const db = window.supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_KEY
+      );
+
+      function itineraryText(value) {
+        if (!value) return "";
+
+        if (typeof value === "string") return value;
+
+        if (Array.isArray(value)) {
+          return value.map(item => {
+            if (typeof item === "string") return item;
+            if (item && typeof item === "object") {
+              return Object.entries(item)
+                .map(([key, val]) => `${key}: ${val}`)
+                .join("\n");
+            }
+            return String(item);
+          }).join("\n\n");
+        }
+
+        if (typeof value === "object") {
+          return Object.entries(value)
+            .map(([key, val]) => `${key}: ${
+              typeof val === "object"
+                ? JSON.stringify(val)
+                : val
+            }`)
+            .join("\n\n");
+        }
+
+        return String(value);
+      }
+
+      try {
+        const { data: pkg, error } = await db
+          .from("packages")
+          .select(
+            "id,title,slug,destination,duration,price,description,itinerary,image_url,brochure_url"
+          )
+          .eq("slug", slug)
+          .eq("is_published", true)
+          .maybeSingle();
+
+        if (error) throw error;
+
+        if (!pkg) {
+          status.textContent =
+            "This package is unavailable or has been unpublished.";
+          return;
+        }
+
+        const title =
+          pkg.title || pkg.destination || "Tour package";
+
+        document.title = `${title} | BLISSPOINT Holidays`;
+        document.getElementById("title").textContent = title;
+
+        document.getElementById("meta").textContent = [
+          pkg.destination,
+          pkg.duration,
+          pkg.price != null ? `₹${pkg.price}` : null
+        ].filter(Boolean).join(" · ");
+
+        document.getElementById("description").textContent =
+          pkg.description || "Contact us for package details.";
+
+        const image = document.getElementById("image");
+        if (pkg.image_url) {
+          image.src = pkg.image_url;
+          image.alt = title;
+          image.hidden = false;
+          image.onerror = () => { image.hidden = true; };
+        }
+
+        const itinerary = itineraryText(pkg.itinerary);
+        if (itinerary) {
+          document.getElementById("itinerary").textContent =
+            itinerary;
+          document.getElementById("itinerarySection").hidden =
+            false;
+        }
+
+        const actions = document.getElementById("actions");
+
+        if (pkg.brochure_url) {
+          const brochure = document.createElement("a");
+          brochure.className = "btn secondary";
+          brochure.href = pkg.brochure_url;
+          brochure.target = "_blank";
+          brochure.rel = "noopener noreferrer";
+          brochure.textContent = "View brochure ↗";
+          actions.appendChild(brochure);
+        }
+
+        const enquiry = document.createElement("a");
+        const message =
+          `Hi BLISSPOINT Holidays! I'm interested in the ${title} package. Please share more details.`;
+
+        enquiry.className = "btn";
+        enquiry.href =
+          `https://wa.me/${WHATSAPP}?text=${encodeURIComponent(message)}`;
+        enquiry.target = "_blank";
+        enquiry.rel = "noopener noreferrer";
+        enquiry.textContent = "Enquire on WhatsApp ↗";
+        actions.appendChild(enquiry);
+
+        status.hidden = true;
+        article.hidden = false;
+
+      } catch (error) {
+        console.error("Unable to load package:", error);
+        status.textContent =
+          "Unable to load package details. Please try again.";
+      }
+    })();
+  </script>
+</body>
+</html>
