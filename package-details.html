@@ -1,322 +1,1404 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Tour Package | BLISSPOINT Holidays</title>
-  <meta name="description" content="Explore tour packages with BLISSPOINT Holidays.">
-  <style>
-    :root {
-      --ink: #102b45;
-      --teal: #087b78;
-      --deep: #064e52;
-      --cream: #fbf8ef;
-      --muted: #647482;
-    }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 
-    * { box-sizing: border-box; }
+<title>Package | BLISSPOINT Holidays</title>
 
-    body {
-      margin: 0;
-      background: var(--cream);
-      color: var(--ink);
-      font-family: Inter, system-ui, sans-serif;
-    }
+<meta
+  name="description"
+  content="Explore curated tour packages with BLISSPOINT Holidays."
+>
 
-    a { color: inherit; text-decoration: none; }
+<style>
+:root{
+  --ink:#102b45;
+  --teal:#087b78;
+  --deep:#064e52;
+  --cream:#fbf8ef;
+  --mint:#eaf3ed;
+  --muted:#647482;
+  --line:#e4e8e2;
+  --gold:#f2b544;
+}
 
-    header {
-      background: #fffdf8;
-      border-bottom: 1px solid #e4e8e2;
-      padding: 18px 5%;
-    }
+*{
+  box-sizing:border-box;
+}
 
-    .brand {
-      font-weight: 900;
-      color: var(--deep);
-      letter-spacing: .04em;
-    }
+html{
+  scroll-behavior:smooth;
+}
 
-    .container {
-      width: min(1000px, 92%);
-      margin: auto;
-    }
+body{
+  margin:0;
+  background:var(--cream);
+  color:var(--ink);
+  font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
+}
 
-    .back {
-      display: inline-block;
-      margin: 30px 0 18px;
-      color: var(--teal);
-      font-weight: 750;
-    }
+a{
+  color:inherit;
+  text-decoration:none;
+}
 
-    .hero-image {
-  display: block;
-  width: 100%;
-  height: auto;
-  max-height: none;
-  object-fit: contain;
-  object-position: center;
-  border-radius: 20px;
-  background: #fff;
-    }
-    <iframe
-  id="brochureViewer"
-  title="Package brochure"
-  style="display:none; width:100%; height:80vh; border:0; border-radius:16px;"
-></iframe>
+button{
+  font:inherit;
+}
 
-    .content {
-      padding: 30px 0 70px;
-    }
+.wrap{
+  width:min(1180px,92%);
+  margin:auto;
+}
 
-    .kicker {
-      text-transform: uppercase;
-      letter-spacing: .2em;
-      font-size: 11px;
-      font-weight: 850;
-      color: var(--teal);
-    }
 
-    h1 {
-      font: 700 clamp(34px, 6vw, 56px)/1.08 Georgia, serif;
-      margin: 12px 0;
-    }
+/* =========================
+   HEADER
+========================= */
 
-    .meta {
-      color: var(--muted);
-      font-weight: 750;
-      margin: 14px 0 25px;
-    }
+header{
+  position:sticky;
+  top:0;
+  z-index:30;
+  background:#fffdf8ed;
+  backdrop-filter:blur(14px);
+  border-bottom:1px solid #e7e8df;
+}
 
-    .description {
-      line-height: 1.8;
-      color: #526771;
-      white-space: pre-line;
-    }
+.nav{
+  min-height:76px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:25px;
+}
 
-    h2 {
-      font: 700 27px Georgia, serif;
-      margin: 35px 0 15px;
-    }
+.brand{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  font-weight:900;
+  letter-spacing:.04em;
+  font-size:18px;
+  color:var(--deep);
+}
 
-    .itinerary {
-      line-height: 1.8;
-      color: #526771;
-      white-space: pre-line;
-    }
+.brand-mark{
+  width:34px;
+  height:32px;
+  display:grid;
+  place-items:center;
+  color:var(--teal);
+  font-size:18px;
+}
 
-    .actions {
-      display: flex;
-      gap: 12px;
-      flex-wrap: wrap;
-      margin-top: 30px;
-    }
+.brand small{
+  display:block;
+  font-size:8px;
+  letter-spacing:.18em;
+  color:var(--muted);
+  font-weight:700;
+}
 
-    .btn {
-      display: inline-block;
-      border-radius: 999px;
-      padding: 14px 22px;
-      background: var(--deep);
-      color: white;
-      font-weight: 750;
-    }
 
-    .btn.secondary {
-      background: #e1eee8;
-      color: var(--deep);
-    }
+/* =========================
+   MAIN
+========================= */
 
-    .status {
-      padding: 60px 0;
-      text-align: center;
-      color: var(--muted);
-    }
+main{
+  padding-bottom:80px;
+}
 
-    footer {
-      padding: 25px 5%;
-      background: #f3f0e7;
-      text-align: center;
-      color: var(--muted);
-      font-size: 12px;
-    }
-  </style>
+.back{
+  display:inline-flex;
+  align-items:center;
+  gap:7px;
+  margin:28px 0 18px;
+  color:var(--teal);
+  font-size:14px;
+  font-weight:800;
+}
+
+
+/* =========================
+   BROCHURE / HERO IMAGE
+========================= */
+
+.brochure-image-wrap{
+  width:100%;
+  background:#fff;
+  border-radius:20px;
+  overflow:hidden;
+  border:1px solid var(--line);
+  box-shadow:0 12px 35px #173a3210;
+}
+
+.brochure-image{
+  display:block;
+  width:100%;
+  height:auto;
+  max-height:none;
+  object-fit:contain;
+  object-position:center;
+  background:#fff;
+}
+
+
+/* =========================
+   PACKAGE CONTENT
+========================= */
+
+.package-content{
+  padding:40px 0 20px;
+}
+
+.kicker{
+  text-transform:uppercase;
+  letter-spacing:.24em;
+  font-size:11px;
+  font-weight:850;
+  color:var(--teal);
+}
+
+.package-title{
+  font:700 clamp(44px,7vw,72px)/1 Georgia,serif;
+  letter-spacing:-.04em;
+  margin:13px 0 22px;
+}
+
+.package-meta{
+  display:flex;
+  flex-wrap:wrap;
+  gap:26px;
+  align-items:center;
+  margin-bottom:28px;
+}
+
+.meta-item{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  font-size:16px;
+  font-weight:750;
+  color:#294456;
+}
+
+.meta-icon{
+  color:var(--teal);
+  font-size:21px;
+}
+
+
+/* =========================
+   BUTTONS
+========================= */
+
+.actions{
+  display:flex;
+  flex-wrap:wrap;
+  gap:12px;
+  margin:20px 0 42px;
+}
+
+.btn{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:9px;
+  border:0;
+  border-radius:999px;
+  padding:14px 23px;
+  background:var(--deep);
+  color:white;
+  font-weight:800;
+  cursor:pointer;
+  transition:.2s;
+}
+
+.btn:hover{
+  background:var(--teal);
+  transform:translateY(-2px);
+}
+
+.btn.secondary{
+  background:#fff;
+  color:var(--deep);
+  border:1px solid #b9d4ca;
+}
+
+.btn.secondary:hover{
+  background:var(--mint);
+}
+
+
+/* =========================
+   DESCRIPTION / ITINERARY
+========================= */
+
+.info-grid{
+  display:grid;
+  grid-template-columns:1.2fr .8fr;
+  gap:45px;
+  align-items:start;
+}
+
+.info-section h2{
+  font:700 31px/1.15 Georgia,serif;
+  margin:0 0 15px;
+}
+
+.info-section p{
+  color:var(--muted);
+  line-height:1.8;
+  font-size:15px;
+  white-space:pre-line;
+}
+
+.itinerary-box{
+  background:#fff;
+  border:1px solid var(--line);
+  border-radius:18px;
+  padding:25px;
+}
+
+.itinerary-box h3{
+  font:700 23px Georgia,serif;
+  margin:0 0 15px;
+}
+
+.itinerary-content{
+  color:var(--muted);
+  line-height:1.8;
+  white-space:pre-line;
+  font-size:14px;
+}
+
+
+/* =========================
+   BROCHURE PDF SECTION
+========================= */
+
+.brochure-section{
+  margin-top:45px;
+  background:var(--mint);
+  border-radius:20px;
+  padding:25px 30px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:25px;
+}
+
+.brochure-copy{
+  display:flex;
+  align-items:center;
+  gap:17px;
+}
+
+.brochure-icon{
+  width:48px;
+  height:48px;
+  border-radius:12px;
+  background:var(--deep);
+  color:#fff;
+  display:grid;
+  place-items:center;
+  font-size:22px;
+  flex-shrink:0;
+}
+
+.brochure-copy h3{
+  margin:0 0 5px;
+  font-size:18px;
+}
+
+.brochure-copy p{
+  margin:0;
+  color:var(--muted);
+  font-size:13px;
+}
+
+
+/* =========================
+   RELATED PACKAGES
+========================= */
+
+.related{
+  margin-top:70px;
+  padding-top:40px;
+  border-top:1px solid var(--line);
+}
+
+.related-head{
+  display:flex;
+  justify-content:space-between;
+  align-items:end;
+  gap:20px;
+  margin-bottom:22px;
+}
+
+.related-head h2{
+  font:700 31px Georgia,serif;
+  margin:8px 0 0;
+}
+
+.related-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:18px;
+}
+
+.related-card{
+  background:#fff;
+  border:1px solid var(--line);
+  border-radius:17px;
+  overflow:hidden;
+  transition:.25s;
+}
+
+.related-card:hover{
+  transform:translateY(-4px);
+  box-shadow:0 14px 30px #173a3215;
+}
+
+.related-image{
+  width:100%;
+  height:180px;
+  object-fit:cover;
+  display:block;
+  background:#dcefe8;
+}
+
+.related-body{
+  padding:17px;
+}
+
+.related-body h3{
+  font:700 21px Georgia,serif;
+  margin:0 0 7px;
+}
+
+.related-body p{
+  color:var(--muted);
+  font-size:13px;
+  margin:0;
+}
+
+
+/* =========================
+   STATUS
+========================= */
+
+.status{
+  text-align:center;
+  padding:80px 20px;
+  color:var(--muted);
+}
+
+.error{
+  color:#a44;
+}
+
+
+/* =========================
+   FOOTER
+========================= */
+
+footer{
+  padding:28px 0;
+  background:#f3f0e7;
+  text-align:center;
+  color:var(--muted);
+  font-size:12px;
+}
+
+
+/* =========================
+   MOBILE
+========================= */
+
+@media(max-width:800px){
+
+  .nav{
+    min-height:65px;
+  }
+
+  .brand{
+    font-size:16px;
+  }
+
+  .brand small{
+    display:none;
+  }
+
+  .package-title{
+    font-size:48px;
+  }
+
+  .info-grid{
+    grid-template-columns:1fr;
+    gap:30px;
+  }
+
+  .related-grid{
+    grid-template-columns:1fr;
+  }
+
+  .brochure-section{
+    flex-direction:column;
+    align-items:flex-start;
+  }
+
+}
+
+@media(max-width:600px){
+
+  .wrap{
+    width:92%;
+  }
+
+  .back{
+    margin-top:20px;
+  }
+
+  .brochure-image-wrap{
+    border-radius:14px;
+  }
+
+  .package-content{
+    padding-top:30px;
+  }
+
+  .package-title{
+    font-size:43px;
+  }
+
+  .package-meta{
+    gap:14px;
+    flex-direction:column;
+    align-items:flex-start;
+  }
+
+  .actions{
+    flex-direction:column;
+    align-items:stretch;
+  }
+
+  .btn{
+    width:100%;
+  }
+
+  .brochure-section{
+    padding:20px;
+  }
+
+}
+</style>
 </head>
+
+
 <body>
-  <header>
-    <a class="brand" href="index.html">▲ BLISSPOINT HOLIDAYS</a>
-  </header>
 
-  <main class="container">
-    <a class="back" href="index.html#packages">← Back to packages</a>
+<header>
+  <div class="wrap nav">
 
-    <div id="status" class="status">Loading package details…</div>
+    <a class="brand" href="index.html">
+      <span class="brand-mark">▲</span>
+
+      <span>
+        BLISSPOINT HOLIDAYS
+        <small>TRAVEL · EXPLORE · BELONG</small>
+      </span>
+    </a>
+
+  </div>
+</header>
+
+
+<main>
+
+  <div class="wrap">
+
+    <a class="back" href="index.html#packages">
+      ← Back to packages
+    </a>
+
+
+    <!-- Loading state -->
+
+    <div id="status" class="status">
+      Loading package…
+    </div>
+
+
+    <!-- Package -->
 
     <article id="package" hidden>
-      <img id="image" class="hero-image" alt="" hidden>
 
-      <div class="content">
-        <div class="kicker">BLISSPOINT Holidays · Your next getaway</div>
-        <h1 id="title"></h1>
-        <div id="meta" class="meta"></div>
-        <p id="description" class="description"></p>
 
-        <section id="itinerarySection" hidden>
-          <h2>Tour itinerary</h2>
-          <div id="itinerary" class="itinerary"></div>
+      <!-- =========================
+           FULL BROCHURE IMAGE
+      ========================== -->
+
+      <div
+        id="brochureImageWrap"
+        class="brochure-image-wrap"
+        hidden
+      >
+        <img
+          id="brochureImage"
+          class="brochure-image"
+          alt=""
+        >
+      </div>
+
+
+      <!-- =========================
+           PACKAGE INFORMATION
+      ========================== -->
+
+      <div class="package-content">
+
+        <div class="kicker">
+          BLISSPOINT Holidays · Your next getaway
+        </div>
+
+        <h1
+          id="title"
+          class="package-title"
+        ></h1>
+
+
+        <div
+          id="meta"
+          class="package-meta"
+        ></div>
+
+
+        <!-- Actions -->
+
+        <div
+          id="actions"
+          class="actions"
+        ></div>
+
+
+        <!-- Description + itinerary -->
+
+        <div class="info-grid">
+
+          <section
+            id="descriptionSection"
+            class="info-section"
+            hidden
+          >
+
+            <h2>
+              About this package
+            </h2>
+
+            <p id="description"></p>
+
+          </section>
+
+
+          <section
+            id="itinerarySection"
+            class="itinerary-box"
+            hidden
+          >
+
+            <h3>
+              Tour itinerary
+            </h3>
+
+            <div
+              id="itinerary"
+              class="itinerary-content"
+            ></div>
+
+          </section>
+
+        </div>
+
+
+        <!-- =========================
+             PDF BROCHURE
+        ========================== -->
+
+        <section
+          id="brochureSection"
+          class="brochure-section"
+          hidden
+        >
+
+          <div class="brochure-copy">
+
+            <div class="brochure-icon">
+              ▣
+            </div>
+
+            <div>
+
+              <h3>
+                View full itinerary & brochure
+              </h3>
+
+              <p>
+                Open the complete brochure with day-wise
+                itinerary and package information.
+              </p>
+
+            </div>
+
+          </div>
+
+
+          <a
+            id="brochureLink"
+            class="btn secondary"
+            href="#"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            View brochure ↗
+          </a>
+
         </section>
 
-        <div class="actions" id="actions"></div>
+
+        <!-- =========================
+             RELATED PACKAGES
+        ========================== -->
+
+        <section class="related">
+
+          <div class="related-head">
+
+            <div>
+
+              <div class="kicker">
+                Explore more
+              </div>
+
+              <h2>
+                You may also like
+              </h2>
+
+            </div>
+
+            <a
+              href="index.html#packages"
+              class="back"
+              style="margin:0"
+            >
+              View all packages →
+            </a>
+
+          </div>
+
+
+          <div
+            id="relatedGrid"
+            class="related-grid"
+          ></div>
+
+        </section>
+
       </div>
+
     </article>
-  </main>
 
-  <footer>
-    © <span id="year"></span> BLISSPOINT Holidays · Travel · Explore · Belong
-  </footer>
+  </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script>
-    (async function () {
-      "use strict";
+</main>
 
-      const SUPABASE_URL =
-        "https://zqpqdlaeifktfdwajaou.supabase.co";
-      const SUPABASE_KEY =
-        "sb_publishable_jKd0t6fRhdHPgzYM_C2BQg_1Ij39Gph";
-      const WHATSAPP = "917639968597";
 
-      document.getElementById("year").textContent =
-        new Date().getFullYear();
+<footer>
 
-      const status = document.getElementById("status");
-      const article = document.getElementById("package");
+  © <span id="year"></span>
+  BLISSPOINT Holidays · Travel · Explore · Belong
 
-      const params = new URLSearchParams(window.location.search);
-      const slug = params.get("slug");
+</footer>
 
-      if (!slug) {
-        status.textContent = "No package was selected.";
-        return;
-      }
 
-      const db = window.supabase.createClient(
-        SUPABASE_URL,
-        SUPABASE_KEY
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script>
+
+(async function(){
+
+  "use strict";
+
+
+  /* =========================
+     CONFIGURATION
+  ========================== */
+
+  const SUPABASE_URL =
+    "https://zqpqdlaeifktfdwajaou.supabase.co";
+
+  const SUPABASE_KEY =
+    "sb_publishable_jKd0t6fRhdHPgzYM_C2BQg_1Ij39Gph";
+
+  const WHATSAPP =
+    "917639968597";
+
+
+  /* =========================
+     BASIC SETUP
+  ========================== */
+
+  document.getElementById("year").textContent =
+    new Date().getFullYear();
+
+
+  const status =
+    document.getElementById("status");
+
+  const article =
+    document.getElementById("package");
+
+
+  const params =
+    new URLSearchParams(window.location.search);
+
+  const slug =
+    params.get("slug");
+
+
+  if(!slug){
+
+    status.textContent =
+      "No package was selected.";
+
+    return;
+
+  }
+
+
+  if(!window.supabase){
+
+    status.textContent =
+      "Unable to connect to the package service.";
+
+    return;
+
+  }
+
+
+  const db =
+    window.supabase.createClient(
+      SUPABASE_URL,
+      SUPABASE_KEY
+    );
+
+
+  /* =========================
+     ITINERARY FORMATTER
+  ========================== */
+
+  function formatItinerary(value){
+
+    if(!value){
+      return "";
+    }
+
+
+    if(typeof value === "string"){
+      return value;
+    }
+
+
+    if(Array.isArray(value)){
+
+      return value
+        .map(function(item){
+
+          if(typeof item === "string"){
+            return item;
+          }
+
+          if(item && typeof item === "object"){
+
+            return Object.entries(item)
+              .map(function(entry){
+
+                return entry[0] + ": " + entry[1];
+
+              })
+              .join("\n");
+
+          }
+
+          return String(item);
+
+        })
+        .join("\n\n");
+
+    }
+
+
+    if(typeof value === "object"){
+
+      return Object.entries(value)
+        .map(function(entry){
+
+          return entry[0] + ": " +
+            (
+              typeof entry[1] === "object"
+                ? JSON.stringify(entry[1])
+                : entry[1]
+            );
+
+        })
+        .join("\n\n");
+
+    }
+
+
+    return String(value);
+
+  }
+
+
+  /* =========================
+     LOAD PACKAGE
+  ========================== */
+
+  try{
+
+    const result =
+      await db
+        .from("packages")
+        .select(`
+          id,
+          title,
+          slug,
+          destination,
+          duration,
+          price,
+          description,
+          itinerary,
+          image_url,
+          brochure_url
+        `)
+        .eq("slug", slug)
+        .eq("is_published", true)
+        .maybeSingle();
+
+
+    if(result.error){
+      throw result.error;
+    }
+
+
+    const pkg =
+      result.data;
+
+
+    if(!pkg){
+
+      status.textContent =
+        "This package is unavailable or has been unpublished.";
+
+      return;
+
+    }
+
+
+    /* =========================
+       TITLE
+    ========================== */
+
+    const title =
+      pkg.title ||
+      pkg.destination ||
+      "Tour package";
+
+
+    document.title =
+      title + " | BLISSPOINT Holidays";
+
+
+    document.getElementById("title")
+      .textContent = title;
+
+
+    /* =========================
+       BROCHURE IMAGE
+    ========================== */
+
+    const brochureWrap =
+      document.getElementById(
+        "brochureImageWrap"
       );
 
-      function itineraryText(value) {
-        if (!value) return "";
+    const brochureImage =
+      document.getElementById(
+        "brochureImage"
+      );
 
-        if (typeof value === "string") return value;
 
-        if (Array.isArray(value)) {
-          return value.map(item => {
-            if (typeof item === "string") return item;
-            if (item && typeof item === "object") {
-              return Object.entries(item)
-                .map(([key, val]) => `${key}: ${val}`)
-                .join("\n");
+    if(pkg.image_url){
+
+      brochureImage.src =
+        pkg.image_url;
+
+      brochureImage.alt =
+        title + " itinerary brochure";
+
+      brochureWrap.hidden =
+        false;
+
+
+      brochureImage.onerror =
+        function(){
+
+          brochureWrap.hidden =
+            true;
+
+        };
+
+    }
+
+
+    /* =========================
+       META
+    ========================== */
+
+    const meta =
+      document.getElementById("meta");
+
+
+    meta.replaceChildren();
+
+
+    if(pkg.destination){
+
+      const destination =
+        document.createElement("div");
+
+      destination.className =
+        "meta-item";
+
+      destination.innerHTML =
+        `<span class="meta-icon">●</span>`;
+
+      const destinationText =
+        document.createElement("span");
+
+      destinationText.textContent =
+        pkg.destination;
+
+      destination.appendChild(
+        destinationText
+      );
+
+      meta.appendChild(
+        destination
+      );
+
+    }
+
+
+    if(pkg.duration){
+
+      const duration =
+        document.createElement("div");
+
+      duration.className =
+        "meta-item";
+
+      duration.innerHTML =
+        `<span class="meta-icon">▣</span>`;
+
+      const durationText =
+        document.createElement("span");
+
+      durationText.textContent =
+        pkg.duration;
+
+      duration.appendChild(
+        durationText
+      );
+
+      meta.appendChild(
+        duration
+      );
+
+    }
+
+
+    if(pkg.price !== null &&
+       pkg.price !== undefined &&
+       pkg.price !== ""){
+
+      const price =
+        document.createElement("div");
+
+      price.className =
+        "meta-item";
+
+      price.innerHTML =
+        `<span class="meta-icon">◆</span>`;
+
+      const priceText =
+        document.createElement("span");
+
+      priceText.textContent =
+        "₹" +
+        Number(pkg.price).toLocaleString("en-IN");
+
+      price.appendChild(
+        priceText
+      );
+
+      meta.appendChild(
+        price
+      );
+
+    }
+
+
+    /* =========================
+       WHATSAPP
+    ========================== */
+
+    const actions =
+      document.getElementById(
+        "actions"
+      );
+
+
+    actions.replaceChildren();
+
+
+    const whatsapp =
+      document.createElement("a");
+
+
+    const whatsappMessage =
+      `Hi BLISSPOINT Holidays! I'm interested in the ${title} package. Please share more details.`;
+
+
+    whatsapp.href =
+      "https://wa.me/" +
+      WHATSAPP +
+      "?text=" +
+      encodeURIComponent(
+        whatsappMessage
+      );
+
+
+    whatsapp.target =
+      "_blank";
+
+    whatsapp.rel =
+      "noopener noreferrer";
+
+    whatsapp.className =
+      "btn";
+
+    whatsapp.textContent =
+      "Enquire on WhatsApp ↗";
+
+
+    actions.appendChild(
+      whatsapp
+    );
+
+
+    /* =========================
+       DESCRIPTION
+    ========================== */
+
+    if(pkg.description){
+
+      const descriptionSection =
+        document.getElementById(
+          "descriptionSection"
+        );
+
+      const description =
+        document.getElementById(
+          "description"
+        );
+
+
+      description.textContent =
+        pkg.description;
+
+
+      descriptionSection.hidden =
+        false;
+
+    }
+
+
+    /* =========================
+       ITINERARY
+    ========================== */
+
+    const itineraryText =
+      formatItinerary(
+        pkg.itinerary
+      );
+
+
+    if(itineraryText){
+
+      const itinerarySection =
+        document.getElementById(
+          "itinerarySection"
+        );
+
+      const itinerary =
+        document.getElementById(
+          "itinerary"
+        );
+
+
+      itinerary.textContent =
+        itineraryText;
+
+
+      itinerarySection.hidden =
+        false;
+
+    }
+
+
+    /* =========================
+       PDF BROCHURE
+    ========================== */
+
+    if(pkg.brochure_url){
+
+      const brochureSection =
+        document.getElementById(
+          "brochureSection"
+        );
+
+      const brochureLink =
+        document.getElementById(
+          "brochureLink"
+        );
+
+
+      brochureLink.href =
+        pkg.brochure_url;
+
+
+      brochureSection.hidden =
+        false;
+
+    }
+
+
+    /* =========================
+       SHOW PAGE
+    ========================== */
+
+    status.hidden =
+      true;
+
+    article.hidden =
+      false;
+
+
+    /* =========================
+       RELATED PACKAGES
+    ========================== */
+
+    await loadRelatedPackages(
+      db,
+      pkg.id
+    );
+
+
+  }catch(error){
+
+    console.error(
+      "Unable to load package:",
+      error
+    );
+
+
+    status.classList.add(
+      "error"
+    );
+
+
+    status.textContent =
+      "Unable to load package details. Please try again.";
+
+  }
+
+
+  /* =========================
+     RELATED PACKAGES
+  ========================== */
+
+  async function loadRelatedPackages(
+    db,
+    currentId
+  ){
+
+    const relatedGrid =
+      document.getElementById(
+        "relatedGrid"
+      );
+
+
+    try{
+
+      const result =
+        await db
+          .from("packages")
+          .select(`
+            id,
+            title,
+            slug,
+            destination,
+            duration,
+            price,
+            image_url
+          `)
+          .eq("is_published", true)
+          .neq("id", currentId)
+          .order(
+            "created_at",
+            {
+              ascending:false
             }
-            return String(item);
-          }).join("\n\n");
-        }
+          )
+          .limit(3);
 
-        if (typeof value === "object") {
-          return Object.entries(value)
-            .map(([key, val]) => `${key}: ${
-              typeof val === "object"
-                ? JSON.stringify(val)
-                : val
-            }`)
-            .join("\n\n");
-        }
 
-        return String(value);
+      if(result.error){
+        throw result.error;
       }
 
-      try {
-        const { data: pkg, error } = await db
-          .from("packages")
-          .select(
-            "id,title,slug,destination,duration,price,description,itinerary,image_url,brochure_url"
-          )
-          .eq("slug", slug)
-          .eq("is_published", true)
-          .maybeSingle();
 
-        if (error) throw error;
+      const packages =
+        result.data || [];
 
-        if (!pkg) {
-          status.textContent =
-            "This package is unavailable or has been unpublished.";
-          return;
+
+      relatedGrid.replaceChildren();
+
+
+      packages.forEach(function(pkg){
+
+        const card =
+          document.createElement("a");
+
+
+        card.className =
+          "related-card";
+
+
+        card.href =
+          "package-details.html?slug=" +
+          encodeURIComponent(
+            pkg.slug
+          );
+
+
+        if(pkg.image_url){
+
+          const image =
+            document.createElement("img");
+
+          image.className =
+            "related-image";
+
+          image.src =
+            pkg.image_url;
+
+          image.alt =
+            pkg.title || "Tour package";
+
+          image.loading =
+            "lazy";
+
+          image.onerror =
+            function(){
+              image.remove();
+            };
+
+          card.appendChild(
+            image
+          );
+
         }
+
+
+        const body =
+          document.createElement("div");
+
+        body.className =
+          "related-body";
+
 
         const title =
-          pkg.title || pkg.destination || "Tour package";
+          document.createElement("h3");
 
-        document.title = `${title} | BLISSPOINT Holidays`;
-        document.getElementById("title").textContent = title;
+        title.textContent =
+          pkg.title ||
+          pkg.destination ||
+          "Tour package";
 
-        document.getElementById("meta").textContent = [
-          pkg.destination,
-          pkg.duration,
-          pkg.price != null ? `₹${pkg.price}` : null
-        ].filter(Boolean).join(" · ");
 
-        document.getElementById("description").textContent =
-          pkg.description || "Contact us for package details.";
+        const details =
+          document.createElement("p");
 
-        const image = document.getElementById("image");
-        if (pkg.image_url) {
-          image.src = pkg.image_url;
-          image.alt = title;
-          image.hidden = false;
-          image.onerror = () => { image.hidden = true; };
-        }
+        details.textContent =
+          [
+            pkg.duration,
+            pkg.price != null
+              ? "₹" +
+                Number(pkg.price)
+                  .toLocaleString("en-IN")
+              : null
+          ]
+          .filter(Boolean)
+          .join(" · ");
 
-        const itinerary = itineraryText(pkg.itinerary);
-        if (itinerary) {
-          document.getElementById("itinerary").textContent =
-            itinerary;
-          document.getElementById("itinerarySection").hidden =
-            false;
-        }
 
-        const actions = document.getElementById("actions");
+        body.append(
+          title,
+          details
+        );
 
-        if (pkg.brochure_url) {
-          const brochure = document.createElement("a");
-          brochure.className = "btn secondary";
-          brochure.href = pkg.brochure_url;
-          brochure.target = "_blank";
-          brochure.rel = "noopener noreferrer";
-          brochure.textContent = "View brochure ↗";
-          actions.appendChild(brochure);
-        }
 
-        const enquiry = document.createElement("a");
-        const message =
-          `Hi BLISSPOINT Holidays! I'm interested in the ${title} package. Please share more details.`;
+        card.appendChild(
+          body
+        );
 
-        enquiry.className = "btn";
-        enquiry.href =
-          `https://wa.me/${WHATSAPP}?text=${encodeURIComponent(message)}`;
-        enquiry.target = "_blank";
-        enquiry.rel = "noopener noreferrer";
-        enquiry.textContent = "Enquire on WhatsApp ↗";
-        actions.appendChild(enquiry);
 
-        status.hidden = true;
-        article.hidden = false;
+        relatedGrid.appendChild(
+          card
+        );
 
-      } catch (error) {
-        console.error("Unable to load package:", error);
-        status.textContent =
-          "Unable to load package details. Please try again.";
-      }
-    })();
-  </script>
+      });
+
+
+    }catch(error){
+
+      console.error(
+        "Unable to load related packages:",
+        error
+      );
+
+    }
+
+  }
+
+})();
+
+</script>
+
 </body>
 </html>
