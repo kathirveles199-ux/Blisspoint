@@ -157,29 +157,138 @@ footer{padding:48px 0 22px;background:#f8f5e9}.footer-top{display:flex;justify-c
 <footer id="contact"><div class="wrap"><div class="footer-top"><div><div class="kicker">Your next chapter awaits</div><h2>Let’s make room for wonder.</h2><p style="color:var(--muted)">Tell us what kind of trip you have in mind. We’ll help shape the rest.</p></div><button class="btn" id="enquireBtn">Plan your trip ↗</button></div><div class="footer-bottom"><span>© <span id="year"></span> BLISSPOINT Holidays</span><span>Travel · Explore · Belong</span><div class="social"><a href="https://wa.me/917639968597" target="_blank">WhatsApp</a><a href="mailto:blisspointholidays@gmail.com">Email us</a><span>Rasipuram · Madurai</span></div></div></div></footer>
 <div class="modal-backdrop" id="modal"><div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle"><button class="close" id="closeModal" aria-label="Close">×</button><div class="kicker">Let’s plan your escape</div><h2 id="modalTitle">Where would you like to go?</h2><p>Share a few details and continue the conversation with BLISSPOINT Holidays on WhatsApp.</p><form id="enquiryForm"><label for="name">Your name</label><input id="name" required placeholder="Name"><label for="place">Destination or trip idea</label><input id="place" placeholder="e.g. A hill station getaway"><label for="group">Group size</label><select id="group"><option>Just me / 2 people</option><option>3–5 people</option><option>6–12 people</option><option>13+ people</option><option>Not sure yet</option></select><button class="btn" type="submit">Continue on WhatsApp ↗</button></form></div></div>
 <script>
-const places=[
-["Ooty","Tamil Nadu","https://loremflickr.com/800/600/ooty,tea,hills?lock=1000"],
-["Kodaikanal","Tamil Nadu","https://loremflickr.com/800/600/kodaikanal,lake,hills?lock=1001"],
-["Yercaud","Tamil Nadu","https://loremflickr.com/800/600/yercaud,hills,forest?lock=1002"],
-["Valparai","Tamil Nadu","https://loremflickr.com/800/600/valparai,tea,plantation?lock=1003"],
-["Kolli Hills","Tamil Nadu","https://loremflickr.com/800/600/kolli,hills,road?lock=1004"],
-["Kanyakumari","Tamil Nadu","https://loremflickr.com/800/600/kanyakumari,coast,india?lock=1005"],
-["Munnar","Kerala","https://loremflickr.com/800/600/munnar,tea,plantation?lock=1006"],
-["Vagamon","Kerala","https://loremflickr.com/800/600/vagamon,meadows,kerala?lock=1007"],
-["Marayoor","Kerala","https://loremflickr.com/800/600/marayoor,kerala,hills?lock=1008"],
-["Kanthalloor","Kerala","https://loremflickr.com/800/600/kanthalloor,kerala,orchards?lock=1009"],
-["Wayanad","Kerala","https://loremflickr.com/800/600/wayanad,waterfall,forest?lock=1010"],
-["Kochi","Kerala","https://loremflickr.com/800/600/kochi,fort,waterfront?lock=1011"],
-["Alleppey","Kerala","https://loremflickr.com/800/600/alleppey,backwaters,houseboat?lock=1012"],
-["Varkala","Kerala","https://loremflickr.com/800/600/varkala,cliff,beach?lock=1013"],
-["Mysore","Karnataka","https://loremflickr.com/800/600/mysore,palace,india?lock=1014"],
-["Coorg","Karnataka","https://loremflickr.com/800/600/coorg,coffee,plantation?lock=1015"],
-["Chikkamagaluru","Karnataka","https://loremflickr.com/800/600/chikmagalur,mountains,coffee?lock=1016"],
-["Gokarna","Karnataka","https://loremflickr.com/800/600/gokarna,beach,coast?lock=1017"],
-["Dandeli","Karnataka","https://loremflickr.com/800/600/dandeli,river,forest?lock=1018"],
-["Murudeshwar","Karnataka","https://loremflickr.com/800/600/murudeshwar,temple,coast?lock=1019"],
-["Udupi","Karnataka","https://loremflickr.com/800/600/udupi,beach,temple?lock=1020"],
-["Bangalore","Karnataka","https://loremflickr.com/800/600/bangalore,city,india?lock=1021"]
+const places = [
+  [
+    "Ooty",
+    "Tamil Nadu",
+    "https://images.unsplash.com/photo-1738207874387-5c98313a3ed5?auto=format&fit=crop&fm=jpg&q=80&w=1200"
+  ],
+
+  [
+    "Kodaikanal",
+    "Tamil Nadu",
+    "https://images.unsplash.com/photo-1772729756487-4f0169ee28e5?auto=format&fit=crop&fm=jpg&q=80&w=1200"
+  ],
+
+  [
+    "Yercaud",
+    "Tamil Nadu",
+    "https://images.unsplash.com/photo-1713240079331-5301b650dc8b?auto=format&fit=crop&fm=jpg&q=80&w=1200"
+  ],
+
+  [
+    "Valparai",
+    "Tamil Nadu",
+    "https://images.unsplash.com/photo-1722089251759-9070758ec65c?auto=format&fit=crop&fm=jpg&q=80&w=1200"
+  ],
+
+  [
+    "Kolli Hills",
+    "Tamil Nadu",
+    "https://commons.wikimedia.org/wiki/Special:Redirect/file/34%20Hairpin%20Kolli%20Hills.jpg"
+  ],
+
+  [
+    "Kanyakumari",
+    "Tamil Nadu",
+    "https://mir-s3-cdn-cf.behance.net/project_modules/fs/c6e1e040242691.5777bd52a9a5e.jpg"
+  ],
+
+  [
+    "Munnar",
+    "Kerala",
+    "https://images.unsplash.com/photo-1666891717987-7509e81db05a?auto=format&fit=crop&fm=jpg&q=80&w=1200"
+  ],
+
+  [
+    "Vagamon",
+    "Kerala",
+    "https://images.unsplash.com/photo-1706952714945-d85d3e933111?auto=format&fit=crop&fm=jpg&q=80&w=1200"
+  ],
+
+  [
+    "Marayoor",
+    "Kerala",
+    "https://dyimg2.realestateindia.com/prop_images/1719048/1430878_1.jpeg"
+  ],
+
+  [
+    "Kanthalloor",
+    "Kerala",
+    "https://www.keralatourism.org/images/enchanting_kerala/large/kanthalloor20230509032938_1296_1.jpg"
+  ],
+
+  [
+    "Wayanad",
+    "Kerala",
+    "https://i0.wp.com/theunstumbled.com/wp-content/uploads/2024/09/Wayanad-Kerala.jpg?resize=700%2C515&ssl=1"
+  ],
+
+  [
+    "Kochi",
+    "Kerala",
+    "https://i0.wp.com/footlooseinme.com/wp-content/uploads/2018/11/dsc_4553.jpg?fit=6000%2C4000&ssl=1"
+  ],
+
+  [
+    "Alleppey",
+    "Kerala",
+    "https://images.beyondyatra.com/dest/alleppey/places/vembanad-lake-kerala-india_img_1.jpg"
+  ],
+
+  [
+    "Varkala",
+    "Kerala",
+    "https://seoimgak.mmtcdn.com/blog/sites/default/files/images/celebration-of-gods-own-country-beach.jpg"
+  ],
+
+  [
+    "Mysore",
+    "Karnataka",
+    "https://images.unsplash.com/photo-1568908398603-344f83c357e8?fm=jpg&q=80&w=1200"
+  ],
+
+  [
+    "Coorg",
+    "Karnataka",
+    "https://images.unsplash.com/photo-1694537623159-52f5c5a98029?auto=format&fit=crop&fm=jpg&q=80&w=1200"
+  ],
+
+  [
+    "Chikkamagaluru",
+    "Karnataka",
+    "https://images.unsplash.com/photo-1739038034755-da0dd12de467?auto=format&fit=crop&fm=jpg&q=80&w=1200"
+  ],
+
+  [
+    "Gokarna",
+    "Karnataka",
+    "https://images.unsplash.com/photo-1620987327682-1b8581fe5567?auto=format&fit=crop&fm=jpg&q=80&w=1200"
+  ],
+
+  [
+    "Dandeli",
+    "Karnataka",
+    "https://images.unsplash.com/photo-1750353127516-87bd2c25c21d?auto=format&fit=crop&fm=jpg&q=80&w=1200"
+  ],
+
+  [
+    "Murudeshwar",
+    "Karnataka",
+    "https://i0.wp.com/trinitybooking.com/wp-content/uploads/2019/01/murudeshwar.jpg?fit=2048%2C1433&ssl=1"
+  ],
+
+  [
+    "Udupi",
+    "Karnataka",
+    "https://images.unsplash.com/photo-1622173324953-adb598835e7a?auto=format&fit=crop&fm=jpg&q=80&w=1200"
+  ],
+
+  [
+    "Bangalore",
+    "Karnataka",
+    "https://d2l4159s3q6ni.cloudfront.net/resize/1440x800/filters%3Amax_age%282604800%29%3Aquality%2885%29/s3/dam/photos/f6/4a/02/a3/c33fee1ffb7bd70af35603785dfbd29b1a893d95ad05374d4fbfa0b8.jpg"
+  ]
 ];
 let region="All";const grid=document.getElementById("destinationGrid"),search=document.getElementById("search");
 function render(){const q=search.value.trim().toLowerCase();const shown=places.filter(p=>(region==="All"||p[1]===region)&&p[0].toLowerCase().includes(q));grid.innerHTML=shown.length?shown.map(p=>`<article class="destination" tabindex="0" role="button" aria-label="Enquire about ${p[0]}" data-place="${p[0]}"><img loading="lazy" src="${p[2]}" alt="${p[0]} scenic landscape"><div class="dest-label"><small>${p[1]}</small><h3>${p[0]}</h3></div><span class="dest-arrow">↗</span></article>`).join(""):'<div class="empty">No destinations match your search.</div>';grid.querySelectorAll(".destination").forEach(el=>{const go=()=>{document.getElementById("place").value=el.dataset.place;openModal()};el.addEventListener("click",go);el.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();go()}})})}
